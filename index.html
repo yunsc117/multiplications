@@ -4,18 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>예라를 위한 퍼센트 계산 연습</title>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,400&family=Baloo+2:wght@700;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #FFF8E7;
-      --card: #FFFFFF;
-      --c1: #FF6B6B;
-      --c2: #FFA62B;
-      --c3: #4ECDC4;
-      --c4: #6C63FF;
-      --c5: #FF78B2;
-      --text: #1A1A2E;
-      --muted: #6B6B8A;
+      --bg: #F6F1E9;
+      --card: #FEFCF8;
+      --gold: #B8922A;
+      --gold-bright: #D4AF37;
+      --gold-pale: #F0E6C8;
+      --dark: #1A120A;
+      --text: #2A1E10;
+      --muted: #8A7A65;
+      --c1: #C9A440;
+      --c2: #AD8B2A;
+      --c3: #B47B2A;
+      --c4: #9B7D2A;
+      --c5: #D4AF37;
       --correct-bg: #F0FDF4;
       --correct-border: #22C55E;
       --wrong-bg: #FFF1F0;
@@ -27,105 +31,164 @@
     body {
       font-family: 'Noto Sans KR', sans-serif;
       background-color: var(--bg);
-      background-image:
-        radial-gradient(circle at 15% 15%, rgba(255,107,107,0.12) 0%, transparent 45%),
-        radial-gradient(circle at 85% 85%, rgba(78,205,196,0.12) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(255,166,43,0.07) 0%, transparent 60%);
       min-height: 100vh;
-      padding: 36px 16px 60px;
+      padding: 0 0 40px;
     }
 
-    body::before {
-      content: '';
+    /* ── 브랜드 배경 워터마크 ── */
+    .brand-bg {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(circle, rgba(160,140,120,0.25) 1px, transparent 1px);
-      background-size: 26px 26px;
       pointer-events: none;
       z-index: 0;
+      overflow: hidden;
     }
 
+    .brand-bg span {
+      position: absolute;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      opacity: 0.13;
+      white-space: nowrap;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    /* ── 브랜드 티커 ── */
+    .brand-ticker {
+      background: var(--dark);
+      overflow: hidden;
+      padding: 9px 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 28s linear infinite;
+    }
+
+    .brand-ticker-track span {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      color: var(--gold-bright);
+      padding: 0 18px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .brand-ticker-track span.dot {
+      color: var(--gold);
+      opacity: 0.5;
+      padding: 0;
+      letter-spacing: 0;
+      font-size: 0.55rem;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Container ── */
     .container {
       position: relative;
       z-index: 1;
-      max-width: 580px;
+      max-width: 560px;
       margin: 0 auto;
+      padding: 22px 16px 0;
     }
 
     /* ── Header ── */
     .header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
       animation: fadeDown 0.55s ease both;
     }
 
     .header-icon {
-      font-size: 60px;
+      font-size: 48px;
       display: block;
-      margin-bottom: 10px;
-      animation: float 3s ease-in-out infinite;
+      margin-bottom: 6px;
+      animation: float 4s ease-in-out infinite;
     }
 
     .header h1 {
-      font-family: 'Baloo 2', cursive;
-      font-size: 2.35rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.95rem;
       font-weight: 800;
       color: var(--text);
-      line-height: 1.15;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
     }
 
-    .header p {
-      font-size: 1rem;
+    .header h1 .gold-line {
+      display: block;
+      font-style: italic;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    .header-sub {
+      font-size: 0.9rem;
       color: var(--muted);
       margin-top: 6px;
+      letter-spacing: 0.03em;
     }
 
     /* ── Score Banner ── */
     .score-banner {
       display: none;
       text-align: center;
-      background: white;
-      border-radius: 22px;
-      padding: 28px 24px;
-      margin-bottom: 28px;
-      box-shadow: 0 6px 28px rgba(0,0,0,0.09);
+      background: var(--dark);
+      border-radius: 18px;
+      padding: 20px 20px;
+      margin-bottom: 14px;
       animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
-    .score-icon { font-size: 3.2rem; display: block; margin-bottom: 6px; }
+    .score-icon { font-size: 2.6rem; display: block; margin-bottom: 4px; }
 
     .score-main {
-      font-family: 'Baloo 2', cursive;
-      font-size: 2.2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
       font-weight: 800;
-      color: var(--text);
+      color: var(--gold-bright);
+      letter-spacing: 0.03em;
     }
 
     .score-msg {
-      font-size: 1.05rem;
-      color: var(--muted);
-      margin-top: 5px;
+      font-size: 0.95rem;
+      color: #C8B89A;
+      margin-top: 4px;
     }
 
     /* ── Question Cards ── */
-    .questions { display: flex; flex-direction: column; gap: 14px; }
+    .questions { display: flex; flex-direction: column; gap: 10px; }
 
     .q-card {
       background: var(--card);
-      border-radius: 20px;
-      padding: 16px 22px;
+      border-radius: 16px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
-      gap: 18px;
-      box-shadow: 0 3px 18px rgba(0,0,0,0.07);
-      border-left: 6px solid transparent;
+      gap: 16px;
+      box-shadow: 0 2px 14px rgba(90,60,10,0.08);
+      border-left: 5px solid transparent;
       opacity: 0;
-      transform: translateX(-18px);
+      transform: translateX(-16px);
       animation: slideIn 0.45s ease forwards;
       transition: box-shadow 0.2s;
     }
 
-    .q-card:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.11); }
+    .q-card:hover { box-shadow: 0 6px 24px rgba(90,60,10,0.13); }
 
     .q-card:nth-child(1) { border-left-color: var(--c1); animation-delay: 0.08s; }
     .q-card:nth-child(2) { border-left-color: var(--c2); animation-delay: 0.18s; }
@@ -135,11 +198,12 @@
 
     .q-num {
       font-family: 'Baloo 2', cursive;
-      font-size: 2rem;
+      font-size: 1.9rem;
       font-weight: 800;
-      min-width: 40px;
+      min-width: 36px;
       text-align: center;
       line-height: 1;
+      color: var(--gold);
     }
 
     .q-card:nth-child(1) .q-num { color: var(--c1); }
@@ -158,7 +222,7 @@
 
     .q-text {
       flex: 1;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text);
       line-height: 1.3;
@@ -168,20 +232,20 @@
     .q-text .bold {
       font-family: 'Baloo 2', cursive;
       font-weight: 800;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
     }
 
     .q-input {
-      width: 100px;
-      height: 50px;
-      border: 2.5px solid #DDD5C8;
-      border-radius: 13px;
+      width: 96px;
+      height: 48px;
+      border: 2px solid var(--gold-pale);
+      border-radius: 12px;
       font-size: 1.35rem;
       font-family: 'Baloo 2', cursive;
       font-weight: 700;
       text-align: center;
       color: var(--text);
-      background: #FAFAF8;
+      background: #FAFAF6;
       outline: none;
       transition: border-color 0.2s, background 0.2s, transform 0.12s, box-shadow 0.2s;
       -moz-appearance: textfield;
@@ -193,29 +257,28 @@
     .q-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 
     .q-input:focus {
-      border-color: #4ECDC4;
+      border-color: var(--gold);
       background: #FFF;
       transform: scale(1.04);
-      box-shadow: 0 0 0 3px rgba(78,205,196,0.18);
+      box-shadow: 0 0 0 3px rgba(184,146,42,0.18);
     }
 
     .q-input:disabled { opacity: 0.75; cursor: not-allowed; }
 
     .q-result-icon {
-      font-size: 1.7rem;
+      font-size: 1.6rem;
       display: none;
       animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     .q-correct-label {
       display: none;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: var(--wrong-border);
       font-weight: 600;
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
-    /* Card result states */
     .q-card.correct {
       background: var(--correct-bg);
       border-left-color: var(--correct-border) !important;
@@ -230,23 +293,23 @@
 
     /* ── Buttons ── */
     .btn-row {
-      margin-top: 30px;
+      margin-top: 18px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
       justify-content: center;
       animation: fadeUp 0.5s 0.65s ease both;
     }
 
     .btn {
-      padding: 14px 38px;
-      font-size: 1.08rem;
+      padding: 14px 36px;
+      font-size: 1rem;
       font-family: 'Noto Sans KR', sans-serif;
       font-weight: 700;
       border: none;
-      border-radius: 16px;
+      border-radius: 14px;
       cursor: pointer;
       transition: transform 0.14s, box-shadow 0.14s;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.02em;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
@@ -254,32 +317,37 @@
     .btn:active:not(:disabled) { transform: scale(0.96) !important; }
 
     .btn-submit {
-      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-      color: #fff;
-      box-shadow: 0 6px 22px rgba(255,107,107,0.35);
+      background: var(--dark);
+      color: var(--gold-bright);
+      border: 1.5px solid var(--gold);
+      box-shadow: 0 4px 18px rgba(26,18,10,0.25);
     }
 
     .btn-submit:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(255,107,107,0.45);
+      box-shadow: 0 8px 24px rgba(26,18,10,0.35);
+      background: #2C1F0E;
     }
 
     .btn-submit:disabled {
-      background: linear-gradient(135deg, #CCC 0%, #BBB 100%);
+      background: #C8BEB0;
+      border-color: #B0A898;
+      color: #F5F0E8;
       box-shadow: none;
       cursor: not-allowed;
     }
 
     .btn-retry {
-      background: linear-gradient(135deg, #4ECDC4 0%, #38B8AE 100%);
-      color: #fff;
-      box-shadow: 0 6px 22px rgba(78,205,196,0.35);
+      background: var(--gold);
+      color: #FFF8EC;
+      border: 1.5px solid var(--gold-bright);
+      box-shadow: 0 4px 18px rgba(184,146,42,0.30);
       display: none;
     }
 
     .btn-retry:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(78,205,196,0.45);
+      box-shadow: 0 8px 24px rgba(184,146,42,0.40);
     }
 
     /* ── Confetti ── */
@@ -294,83 +362,78 @@
     @keyframes slideIn {
       to { opacity: 1; transform: translateX(0); }
     }
-
     @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-16px); }
+      from { opacity: 0; transform: translateY(-14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
+      from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-9px); }
+      50%       { transform: translateY(-8px); }
     }
-
     @keyframes popIn {
-      from { opacity: 0; transform: scale(0.7); }
+      from { opacity: 0; transform: scale(0.75); }
       to   { opacity: 1; transform: scale(1); }
     }
-
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      18%  { transform: translateX(-7px); }
-      36%  { transform: translateX(7px); }
-      54%  { transform: translateX(-5px); }
-      72%  { transform: translateX(5px); }
+      18%  { transform: translateX(-6px); }
+      36%  { transform: translateX(6px); }
+      54%  { transform: translateX(-4px); }
+      72%  { transform: translateX(4px); }
     }
-
-    .shake { animation: shake 0.42s ease; }
+    .shake { animation: shake 0.4s ease; }
 
     /* ── Responsive ── */
     @media (max-width: 580px) {
-      body { padding: 14px 12px 14px; }
+      .container { padding: 14px 12px 0; }
 
-      /* 모바일에서 서브타이틀 숨김 (세로 공간 절약) */
+      /* 서브타이틀 숨김 (세로 공간 절약) */
       .header-sub { display: none; }
+      /* h1 줄바꿈 제거해서 한 줄 처리 */
+      .header h1 br { display: none; }
 
       .header { margin-bottom: 10px; }
-      .header-icon { font-size: 30px; margin-bottom: 2px; animation: none; }
-      .header h1 { font-size: 1.35rem; line-height: 1.2; }
+      .header-icon { font-size: 32px; margin-bottom: 3px; animation: none; }
+      .header h1 { font-size: 1.3rem; }
+      .header h1 .gold-line { font-size: 0.85rem; }
 
-      .score-banner { padding: 12px 14px; border-radius: 16px; margin-bottom: 10px; }
+      .score-banner { padding: 13px 14px; border-radius: 15px; margin-bottom: 10px; }
       .score-icon { font-size: 2rem; margin-bottom: 2px; }
-      .score-main { font-size: 1.5rem; }
-      .score-msg { font-size: 0.85rem; margin-top: 2px; }
+      .score-main { font-size: 1.55rem; }
+      .score-msg { font-size: 0.82rem; margin-top: 2px; }
 
       .questions { gap: 7px; }
 
       .q-card {
-        padding: 11px 14px;
+        padding: 11px 13px;
         gap: 8px;
-        border-radius: 14px;
+        border-radius: 13px;
         border-left-width: 4px;
       }
 
-      .q-num { font-size: 1.25rem; min-width: 22px; }
+      .q-num { font-size: 1.3rem; min-width: 22px; }
 
       .q-row { gap: 8px; }
 
-      .q-text { font-size: 0.93rem; }
-      .q-text .bold { font-size: 1.02rem; }
+      /* 폰트 크게 (iOS 자동 확대 방지: 16px 이상 유지) */
+      .q-text { font-size: 1.05rem; }
+      .q-text .bold { font-size: 1.15rem; }
 
-      /* iOS 자동 확대 방지: 16px 이상 유지 */
       .q-input {
-        width: 76px;
-        height: 42px;
+        width: 80px;
+        height: 44px;
         font-size: 16px;
         border-radius: 10px;
-        border-width: 2px;
       }
 
       .q-input:focus { transform: none; }
 
-      .q-result-icon { font-size: 1.25rem; }
-
-      .q-correct-label { font-size: 0.78rem; margin-top: 4px; }
+      .q-result-icon { font-size: 1.3rem; }
+      .q-correct-label { font-size: 0.78rem; margin-top: 3px; }
 
       .btn-row {
         flex-direction: column;
@@ -380,31 +443,88 @@
 
       .btn {
         width: 100%;
-        padding: 14px 24px;
+        padding: 14px 20px;
         font-size: 1rem;
         border-radius: 13px;
         text-align: center;
       }
-
-      .btn-retry { width: 100%; }
     }
 
-    /* iPhone SE 등 아주 작은 화면 */
+    /* iPhone SE 등 작은 화면 */
     @media (max-width: 360px) {
-      .header h1 { font-size: 1.2rem; }
-      .q-text { font-size: 0.88rem; }
-      .q-input { width: 70px; }
+      .header h1 { font-size: 1.15rem; }
+      .q-text { font-size: 0.95rem; }
+      .q-text .bold { font-size: 1.05rem; }
+      .q-input { width: 72px; }
     }
   </style>
 </head>
 <body>
   <canvas id="confetti-canvas"></canvas>
 
+  <!-- 브랜드 배경 워터마크 -->
+  <div class="brand-bg" aria-hidden="true">
+    <span style="top:3%;left:1%;font-size:1.5rem;transform:rotate(-10deg)">CHANEL</span>
+    <span style="top:3%;right:2%;font-size:1.1rem;transform:rotate(7deg)">GUCCI</span>
+    <span style="top:14%;left:3%;font-size:1rem;transform:rotate(13deg)">HERMÈS</span>
+    <span style="top:14%;right:0%;font-size:1.3rem;transform:rotate(-6deg)">PRADA</span>
+    <span style="top:26%;left:-1%;font-size:1.1rem;transform:rotate(-14deg)">LOUIS VUITTON</span>
+    <span style="top:26%;right:2%;font-size:1rem;transform:rotate(9deg)">DIOR</span>
+    <span style="top:38%;left:2%;font-size:0.95rem;transform:rotate(8deg)">BURBERRY</span>
+    <span style="top:38%;right:1%;font-size:1.2rem;transform:rotate(-11deg)">FENDI</span>
+    <span style="top:50%;left:0%;font-size:1.3rem;transform:rotate(-7deg)">BALENCIAGA</span>
+    <span style="top:50%;right:0%;font-size:1rem;transform:rotate(12deg)">VALENTINO</span>
+    <span style="top:62%;left:2%;font-size:1.1rem;transform:rotate(9deg)">VERSACE</span>
+    <span style="top:62%;right:2%;font-size:1rem;transform:rotate(-8deg)">CÉLINE</span>
+    <span style="top:74%;left:1%;font-size:0.95rem;transform:rotate(-12deg)">GIVENCHY</span>
+    <span style="top:74%;right:1%;font-size:1.2rem;transform:rotate(6deg)">SAINT LAURENT</span>
+    <span style="top:86%;left:3%;font-size:1.1rem;transform:rotate(10deg)">BOTTEGA VENETA</span>
+    <span style="top:86%;right:3%;font-size:1rem;transform:rotate(-9deg)">LOEWE</span>
+  </div>
+
+  <!-- 브랜드 티커 -->
+  <div class="brand-ticker" aria-hidden="true">
+    <div class="brand-ticker-track">
+      <span>CHANEL</span><span class="dot">·</span>
+      <span>GUCCI</span><span class="dot">·</span>
+      <span>HERMÈS</span><span class="dot">·</span>
+      <span>LOUIS VUITTON</span><span class="dot">·</span>
+      <span>PRADA</span><span class="dot">·</span>
+      <span>DIOR</span><span class="dot">·</span>
+      <span>BURBERRY</span><span class="dot">·</span>
+      <span>FENDI</span><span class="dot">·</span>
+      <span>CÉLINE</span><span class="dot">·</span>
+      <span>BALENCIAGA</span><span class="dot">·</span>
+      <span>VALENTINO</span><span class="dot">·</span>
+      <span>VERSACE</span><span class="dot">·</span>
+      <span>SAINT LAURENT</span><span class="dot">·</span>
+      <span>BOTTEGA VENETA</span><span class="dot">·</span>
+      <!-- 두 배로 복제해서 끊김 없이 루프 -->
+      <span>CHANEL</span><span class="dot">·</span>
+      <span>GUCCI</span><span class="dot">·</span>
+      <span>HERMÈS</span><span class="dot">·</span>
+      <span>LOUIS VUITTON</span><span class="dot">·</span>
+      <span>PRADA</span><span class="dot">·</span>
+      <span>DIOR</span><span class="dot">·</span>
+      <span>BURBERRY</span><span class="dot">·</span>
+      <span>FENDI</span><span class="dot">·</span>
+      <span>CÉLINE</span><span class="dot">·</span>
+      <span>BALENCIAGA</span><span class="dot">·</span>
+      <span>VALENTINO</span><span class="dot">·</span>
+      <span>VERSACE</span><span class="dot">·</span>
+      <span>SAINT LAURENT</span><span class="dot">·</span>
+      <span>BOTTEGA VENETA</span><span class="dot">·</span>
+    </div>
+  </div>
+
   <div class="container">
 
     <div class="header">
-      <span class="header-icon">🧮</span>
-      <h1>예라를 위한<br>퍼센트 계산 연습</h1>
+      <span class="header-icon">👜</span>
+      <h1>
+        <span class="gold-line">예라를 위한</span>
+        퍼센트 계산 연습
+      </h1>
       <p class="header-sub">5문제를 모두 풀고 제출해 보세요!</p>
     </div>
 
@@ -496,13 +616,12 @@
         });
       });
 
-      // Reset UI
       document.getElementById('score-banner').style.display = 'none';
       document.getElementById('btn-submit').style.display = '';
       document.getElementById('btn-submit').disabled = true;
       document.getElementById('btn-retry').style.display = 'none';
 
-      document.getElementById(`inp-0`)?.focus();
+      document.getElementById('inp-0')?.focus();
     }
 
     /* ── Input helpers ── */
@@ -526,7 +645,7 @@
         const card = document.getElementById(`card-${i}`);
         const icon = document.getElementById(`icon-${i}`);
 
-        inp.disabled   = true;
+        inp.disabled = true;
         icon.style.display = 'inline';
 
         const userVal = parseFloat(inp.value);
@@ -579,7 +698,7 @@
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
 
-      const COLORS = ['#FF6B6B','#FFA62B','#4ECDC4','#6C63FF','#FF78B2','#FFD93D','#6BCB77'];
+      const COLORS = ['#D4AF37','#C9A440','#F5E6A3','#B8922A','#FEFCF8','#FF78B2','#4ECDC4'];
       const pieces = Array.from({ length: 140 }, () => ({
         x: Math.random() * canvas.width,
         y: -20 - Math.random() * 120,
