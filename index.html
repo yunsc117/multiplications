@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퍼센트 계산 연습</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FFF8E7;
+      --card: #FFFFFF;
+      --c1: #FF6B6B;
+      --c2: #FFA62B;
+      --c3: #4ECDC4;
+      --c4: #6C63FF;
+      --c5: #FF78B2;
+      --text: #1A1A2E;
+      --muted: #6B6B8A;
+      --correct-bg: #F0FDF4;
+      --correct-border: #22C55E;
+      --wrong-bg: #FFF1F0;
+      --wrong-border: #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(255,107,107,0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(78,205,196,0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(255,166,43,0.07) 0%, transparent 60%);
+      min-height: 100vh;
+      padding: 36px 16px 60px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(160,140,120,0.25) 1px, transparent 1px);
+      background-size: 26px 26px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeDown 0.55s ease both;
+    }
+
+    .header-icon {
+      font-size: 60px;
+      display: block;
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .header h1 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2.35rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.15;
+    }
+
+    .header p {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ── Score Banner ── */
+    .score-banner {
+      display: none;
+      text-align: center;
+      background: white;
+      border-radius: 22px;
+      padding: 28px 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.09);
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .score-icon { font-size: 3.2rem; display: block; margin-bottom: 6px; }
+
+    .score-main {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .score-msg {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ── Question Cards ── */
+    .questions { display: flex; flex-direction: column; gap: 14px; }
+
+    .q-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 3px 18px rgba(0,0,0,0.07);
+      border-left: 6px solid transparent;
+      opacity: 0;
+      transform: translateX(-18px);
+      animation: slideIn 0.45s ease forwards;
+      transition: box-shadow 0.2s;
+    }
+
+    .q-card:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.11); }
+
+    .q-card:nth-child(1) { border-left-color: var(--c1); animation-delay: 0.08s; }
+    .q-card:nth-child(2) { border-left-color: var(--c2); animation-delay: 0.18s; }
+    .q-card:nth-child(3) { border-left-color: var(--c3); animation-delay: 0.28s; }
+    .q-card:nth-child(4) { border-left-color: var(--c4); animation-delay: 0.38s; }
+    .q-card:nth-child(5) { border-left-color: var(--c5); animation-delay: 0.48s; }
+
+    .q-num {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2rem;
+      font-weight: 800;
+      min-width: 40px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .q-card:nth-child(1) .q-num { color: var(--c1); }
+    .q-card:nth-child(2) .q-num { color: var(--c2); }
+    .q-card:nth-child(3) .q-num { color: var(--c3); }
+    .q-card:nth-child(4) .q-num { color: var(--c4); }
+    .q-card:nth-child(5) .q-num { color: var(--c5); }
+
+    .q-body { flex: 1; min-width: 0; }
+
+    .q-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .q-text .bold {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.3rem;
+    }
+
+    .q-answer-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .q-input {
+      width: 100px;
+      height: 50px;
+      border: 2.5px solid #DDD5C8;
+      border-radius: 13px;
+      font-size: 1.35rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text);
+      background: #FAFAF8;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, transform 0.12s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .q-input::-webkit-inner-spin-button,
+    .q-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .q-input:focus {
+      border-color: #4ECDC4;
+      background: #FFF;
+      transform: scale(1.04);
+      box-shadow: 0 0 0 3px rgba(78,205,196,0.18);
+    }
+
+    .q-input:disabled { opacity: 0.75; cursor: not-allowed; }
+
+    .q-result-icon {
+      font-size: 1.7rem;
+      display: none;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .q-correct-label {
+      display: none;
+      font-size: 0.88rem;
+      color: var(--wrong-border);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    /* Card result states */
+    .q-card.correct {
+      background: var(--correct-bg);
+      border-left-color: var(--correct-border) !important;
+    }
+
+    .q-card.wrong {
+      background: var(--wrong-bg);
+      border-left-color: var(--wrong-border) !important;
+    }
+
+    .q-card.wrong .q-correct-label { display: block; }
+
+    /* ── Buttons ── */
+    .btn-row {
+      margin-top: 30px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      animation: fadeUp 0.5s 0.65s ease both;
+    }
+
+    .btn {
+      padding: 14px 38px;
+      font-size: 1.08rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.14s, box-shadow 0.14s;
+      letter-spacing: -0.01em;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active:not(:disabled) { transform: scale(0.96) !important; }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      color: #fff;
+      box-shadow: 0 6px 22px rgba(255,107,107,0.35);
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(255,107,107,0.45);
+    }
+
+    .btn-submit:disabled {
+      background: linear-gradient(135deg, #CCC 0%, #BBB 100%);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .btn-retry {
+      background: linear-gradient(135deg, #4ECDC4 0%, #38B8AE 100%);
+      color: #fff;
+      box-shadow: 0 6px 22px rgba(78,205,196,0.35);
+      display: none;
+    }
+
+    .btn-retry:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(78,205,196,0.45);
+    }
+
+    /* ── Confetti ── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── Keyframes ── */
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-9px); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      18%  { transform: translateX(-7px); }
+      36%  { transform: translateX(7px); }
+      54%  { transform: translateX(-5px); }
+      72%  { transform: translateX(5px); }
+    }
+
+    .shake { animation: shake 0.42s ease; }
+
+    /* ── Responsive ── */
+    @media (max-width: 580px) {
+      body { padding: 22px 12px 48px; }
+
+      .header { margin-bottom: 26px; }
+      .header-icon { font-size: 46px; margin-bottom: 6px; }
+      .header h1 { font-size: 1.75rem; }
+      .header p { font-size: 0.92rem; }
+
+      .score-banner { padding: 20px 16px; border-radius: 18px; margin-bottom: 20px; }
+      .score-icon { font-size: 2.6rem; }
+      .score-main { font-size: 1.75rem; }
+      .score-msg { font-size: 0.92rem; }
+
+      .questions { gap: 10px; }
+
+      .q-card {
+        padding: 14px 14px;
+        gap: 10px;
+        border-radius: 16px;
+        border-left-width: 5px;
+      }
+
+      .q-num { font-size: 1.45rem; min-width: 28px; }
+
+      .q-text {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+      .q-text .bold { font-size: 1.1rem; }
+
+      /* 16px 이상으로 설정해 iOS 자동 확대 방지 */
+      .q-input {
+        width: 84px;
+        height: 48px;
+        font-size: 16px;
+        border-radius: 11px;
+      }
+
+      /* 모바일에서 포커스 확대 효과 제거 (레이아웃 틀어짐 방지) */
+      .q-input:focus { transform: none; }
+
+      .q-result-icon { font-size: 1.45rem; }
+
+      .q-correct-label { font-size: 0.82rem; }
+
+      .btn-row {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 16px 24px;
+        font-size: 1.05rem;
+        border-radius: 14px;
+        text-align: center;
+      }
+
+      /* 비활성 제출 버튼은 숨김 처리 후 다시 풀기가 꽉 차게 */
+      .btn-retry { width: 100%; }
+    }
+
+    /* 아주 작은 화면 (SE 등) */
+    @media (max-width: 360px) {
+      .header h1 { font-size: 1.55rem; }
+      .q-text { font-size: 0.95rem; }
+      .q-input { width: 76px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+
+    <div class="header">
+      <span class="header-icon">🧮</span>
+      <h1>퍼센트 계산 연습</h1>
+      <p>5문제를 모두 풀고 제출해 보세요!</p>
+    </div>
+
+    <div id="score-banner" class="score-banner" style="display:none">
+      <span id="score-icon" class="score-icon"></span>
+      <div id="score-main" class="score-main"></div>
+      <div id="score-msg"  class="score-msg"></div>
+    </div>
+
+    <div id="questions" class="questions"></div>
+
+    <div class="btn-row">
+      <button id="btn-submit" class="btn btn-submit" disabled>제출하기 ✏️</button>
+      <button id="btn-retry"  class="btn btn-retry">다시 풀기 🔄</button>
+    </div>
+
+  </div>
+
+  <script>
+    /* ── Problem generation ── */
+    function buildPool() {
+      const pool = [];
+      for (let n = 10; n <= 100; n += 5) {
+        for (let p = 5; p <= 80; p += 5) {
+          const ans = n * p / 100;
+          if (Number.isInteger(ans) && ans >= 2) pool.push({ n, p, ans });
+        }
+      }
+      return pool;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function pick5() {
+      return shuffle(buildPool()).slice(0, 5);
+    }
+
+    /* ── State ── */
+    let problems = [];
+    let submitted = false;
+
+    /* ── Render ── */
+    function render() {
+      problems  = pick5();
+      submitted = false;
+
+      const wrap = document.getElementById('questions');
+      wrap.innerHTML = '';
+
+      problems.forEach(({ n, p }, i) => {
+        const card = document.createElement('div');
+        card.className = 'q-card';
+        card.id = `card-${i}`;
+        card.innerHTML = `
+          <div class="q-num">${i + 1}</div>
+          <div class="q-body">
+            <div class="q-text">
+              <span class="bold">${n}</span>의 <span class="bold">${p}%</span>는 얼마인가요?
+            </div>
+            <div class="q-answer-row">
+              <input id="inp-${i}"
+                     class="q-input"
+                     type="number"
+                     inputmode="decimal"
+                     min="0"
+                     step="any"
+                     placeholder="?"
+                     autocomplete="off" />
+              <span id="icon-${i}" class="q-result-icon"></span>
+            </div>
+            <div id="lbl-${i}" class="q-correct-label">정답: ${problems[i].ans}</div>
+          </div>`;
+        wrap.appendChild(card);
+
+        const inp = document.getElementById(`inp-${i}`);
+        inp.addEventListener('input', checkFill);
+        inp.addEventListener('keydown', e => {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          const next = document.getElementById(`inp-${i + 1}`);
+          if (next) next.focus();
+          else if (allFilled()) grade();
+        });
+      });
+
+      // Reset UI
+      document.getElementById('score-banner').style.display = 'none';
+      document.getElementById('btn-submit').style.display = '';
+      document.getElementById('btn-submit').disabled = true;
+      document.getElementById('btn-retry').style.display = 'none';
+
+      document.getElementById(`inp-0`)?.focus();
+    }
+
+    /* ── Input helpers ── */
+    function allFilled() {
+      return problems.every((_, i) => document.getElementById(`inp-${i}`).value.trim() !== '');
+    }
+
+    function checkFill() {
+      document.getElementById('btn-submit').disabled = !allFilled();
+    }
+
+    /* ── Grading ── */
+    function grade() {
+      if (submitted) return;
+      submitted = true;
+
+      let correct = 0;
+
+      problems.forEach(({ ans }, i) => {
+        const inp  = document.getElementById(`inp-${i}`);
+        const card = document.getElementById(`card-${i}`);
+        const icon = document.getElementById(`icon-${i}`);
+
+        inp.disabled   = true;
+        icon.style.display = 'inline';
+
+        const userVal = parseFloat(inp.value);
+        if (userVal === ans) {
+          correct++;
+          card.classList.add('correct');
+          icon.textContent = '✅';
+        } else {
+          card.classList.add('wrong');
+          icon.textContent = '❌';
+          card.classList.add('shake');
+          card.addEventListener('animationend', () => card.classList.remove('shake'), { once: true });
+        }
+      });
+
+      showScore(correct);
+
+      document.getElementById('btn-submit').style.display = 'none';
+      document.getElementById('btn-retry').style.display  = '';
+
+      if (correct === 5) launchConfetti();
+    }
+
+    /* ── Score banner ── */
+    const SCORE_MSGS = [
+      { icon: '😢', msg: '포기하지 말고 다시 도전해요! 💪' },
+      { icon: '🤔', msg: '한 문제 맞았어요! 조금만 더 힘내요!' },
+      { icon: '😊', msg: '두 문제! 계속 연습하면 늘 거예요!' },
+      { icon: '😄', msg: '절반 넘었어요! 꽤 잘하는걸요?' },
+      { icon: '🎉', msg: '거의 다 맞았어요! 정말 대단해요!' },
+      { icon: '🏆', msg: '5개 모두 정답! 퍼센트 천재예요! 🎊' },
+    ];
+
+    function showScore(correct) {
+      const banner = document.getElementById('score-banner');
+      const { icon, msg } = SCORE_MSGS[correct];
+
+      document.getElementById('score-icon').textContent = icon;
+      document.getElementById('score-main').textContent = `${correct} / 5 정답 (${correct * 20}점)`;
+      document.getElementById('score-msg').textContent  = msg;
+
+      banner.style.display = 'block';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* ── Confetti ── */
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx    = canvas.getContext('2d');
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const COLORS = ['#FF6B6B','#FFA62B','#4ECDC4','#6C63FF','#FF78B2','#FFD93D','#6BCB77'];
+      const pieces = Array.from({ length: 140 }, () => ({
+        x: Math.random() * canvas.width,
+        y: -20 - Math.random() * 120,
+        w: 7 + Math.random() * 7,
+        h: 4 + Math.random() * 5,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        vy: 2.5 + Math.random() * 2.5,
+        vx: (Math.random() - 0.5) * 2.2,
+        angle: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 0.14,
+      }));
+
+      let raf;
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        for (const p of pieces) {
+          if (p.y < canvas.height + 20) {
+            alive = true;
+            p.y += p.vy;
+            p.x += p.vx + Math.sin(p.angle) * 1.2;
+            p.angle += p.spin;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.angle);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+          }
+        }
+        if (alive) raf = requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      };
+      raf = requestAnimationFrame(draw);
+      setTimeout(() => { cancelAnimationFrame(raf); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 5000);
+    }
+
+    /* ── Wire up buttons ── */
+    document.getElementById('btn-submit').addEventListener('click', grade);
+    document.getElementById('btn-retry').addEventListener('click', () => {
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* ── Init ── */
+    render();
+  </script>
+</body>
+</html>
