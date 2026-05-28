@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>퍼센트 계산 연습</title>
+  <title>예라를 위한 퍼센트 계산 연습</title>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -327,72 +327,73 @@
 
     /* ── Responsive ── */
     @media (max-width: 580px) {
-      body { padding: 22px 12px 48px; }
+      body { padding: 14px 12px 14px; }
 
-      .header { margin-bottom: 26px; }
-      .header-icon { font-size: 46px; margin-bottom: 6px; }
-      .header h1 { font-size: 1.75rem; }
-      .header p { font-size: 0.92rem; }
+      /* 모바일에서 서브타이틀 숨김 (세로 공간 절약) */
+      .header-sub { display: none; }
 
-      .score-banner { padding: 20px 16px; border-radius: 18px; margin-bottom: 20px; }
-      .score-icon { font-size: 2.6rem; }
-      .score-main { font-size: 1.75rem; }
-      .score-msg { font-size: 0.92rem; }
+      .header { margin-bottom: 10px; }
+      .header-icon { font-size: 30px; margin-bottom: 2px; animation: none; }
+      .header h1 { font-size: 1.35rem; line-height: 1.2; }
 
-      .questions { gap: 10px; }
+      .score-banner { padding: 12px 14px; border-radius: 16px; margin-bottom: 10px; }
+      .score-icon { font-size: 2rem; margin-bottom: 2px; }
+      .score-main { font-size: 1.5rem; }
+      .score-msg { font-size: 0.85rem; margin-top: 2px; }
+
+      .questions { gap: 7px; }
 
       .q-card {
-        padding: 13px 14px;
+        padding: 11px 14px;
         gap: 8px;
-        border-radius: 16px;
-        border-left-width: 5px;
+        border-radius: 14px;
+        border-left-width: 4px;
       }
 
-      .q-num { font-size: 1.35rem; min-width: 26px; }
+      .q-num { font-size: 1.25rem; min-width: 22px; }
 
       .q-row { gap: 8px; }
 
-      .q-text { font-size: 0.95rem; }
-      .q-text .bold { font-size: 1.05rem; }
+      .q-text { font-size: 0.93rem; }
+      .q-text .bold { font-size: 1.02rem; }
 
-      /* 16px 이상으로 설정해 iOS 자동 확대 방지 */
+      /* iOS 자동 확대 방지: 16px 이상 유지 */
       .q-input {
-        width: 78px;
-        height: 44px;
+        width: 76px;
+        height: 42px;
         font-size: 16px;
         border-radius: 10px;
+        border-width: 2px;
       }
 
-      /* 모바일에서 포커스 확대 효과 제거 (레이아웃 틀어짐 방지) */
       .q-input:focus { transform: none; }
 
-      .q-result-icon { font-size: 1.35rem; }
+      .q-result-icon { font-size: 1.25rem; }
 
-      .q-correct-label { font-size: 0.8rem; }
+      .q-correct-label { font-size: 0.78rem; margin-top: 4px; }
 
       .btn-row {
         flex-direction: column;
-        gap: 10px;
-        margin-top: 22px;
+        gap: 8px;
+        margin-top: 12px;
       }
 
       .btn {
         width: 100%;
-        padding: 16px 24px;
-        font-size: 1.05rem;
-        border-radius: 14px;
+        padding: 14px 24px;
+        font-size: 1rem;
+        border-radius: 13px;
         text-align: center;
       }
 
-      /* 비활성 제출 버튼은 숨김 처리 후 다시 풀기가 꽉 차게 */
       .btn-retry { width: 100%; }
     }
 
-    /* 아주 작은 화면 (SE 등) */
+    /* iPhone SE 등 아주 작은 화면 */
     @media (max-width: 360px) {
-      .header h1 { font-size: 1.55rem; }
-      .q-text { font-size: 0.95rem; }
-      .q-input { width: 76px; }
+      .header h1 { font-size: 1.2rem; }
+      .q-text { font-size: 0.88rem; }
+      .q-input { width: 70px; }
     }
   </style>
 </head>
@@ -403,8 +404,8 @@
 
     <div class="header">
       <span class="header-icon">🧮</span>
-      <h1>퍼센트 계산 연습</h1>
-      <p>5문제를 모두 풀고 제출해 보세요!</p>
+      <h1>예라를 위한<br>퍼센트 계산 연습</h1>
+      <p class="header-sub">5문제를 모두 풀고 제출해 보세요!</p>
     </div>
 
     <div id="score-banner" class="score-banner" style="display:none">
@@ -568,7 +569,7 @@
       document.getElementById('score-msg').textContent  = msg;
 
       banner.style.display = 'block';
-      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     /* ── Confetti ── */
